@@ -53,9 +53,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.konghq</groupId>
-            <artifactId>unirest-java</artifactId>
-            <version>3.13.6</version>
+            <groupId>de.tsearch</groupId>
+            <artifactId>TClient</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
