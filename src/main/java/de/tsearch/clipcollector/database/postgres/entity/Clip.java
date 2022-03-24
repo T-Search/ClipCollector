@@ -20,13 +20,13 @@ public class Clip {
     private Broadcaster broadcaster;
 
     @Column
-    private String creatorID;
+    private String creatorId;
 
     @Column
     private String creatorName;
 
     @Column
-    private String videoID;
+    private String videoId;
 
     @Column
     private String game;
@@ -44,7 +44,7 @@ public class Clip {
     private Date createdAt;
 
     @Column
-    private String thumbnailURL;
+    private String thumbnailUrl;
 
     @Column
     private double duration;
