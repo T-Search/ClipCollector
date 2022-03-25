@@ -10,3 +10,7 @@ spring.datasource.password=root
 spring.jpa.show-sql=false
 spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=validate
+
+# Batch Config
+spring.batch.initialize-schema=always
+spring.batch.job.enabled=false
