@@ -54,10 +54,23 @@
         </dependency>
         <dependency>
             <groupId>de.tsearch</groupId>
-            <artifactId>TClient</artifactId>
+            <artifactId>tclient</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
     </dependencies>
+
+    <repositories>
+        <repository>
+            <id>github-tclient</id>
+            <url>https://maven.pkg.github.com/T-Search/TClient</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>ClipCollector</finalName>
