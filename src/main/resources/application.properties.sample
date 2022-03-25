@@ -1,6 +1,6 @@
 # Twitch Config
 twitch.clientid=ClientId
-twitch.apptoken=Token
+twitch.clientsecret=Secret
 webhook.host=https://DOMAIN.TLD
 
 # Postgres Config
@@ -10,3 +10,7 @@ spring.datasource.password=root
 spring.jpa.show-sql=false
 spring.jpa.generate-ddl=true
 spring.jpa.hibernate.ddl-auto=validate
+
+# Batch Config
+spring.batch.initialize-schema=always
+spring.batch.job.enabled=false
