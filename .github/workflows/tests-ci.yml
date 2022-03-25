@@ -12,6 +12,9 @@ jobs:
     concurrency:
       group: unit-test-${{ github.ref }}
       cancel-in-progress: true
+    permissions:
+      contents: read
+      packages: read
 
     steps:
       - uses: actions/checkout@v2
@@ -27,5 +30,7 @@ jobs:
           cache: maven
 
       - name: Build with Maven
-        run: mvn -B test --file pom.xml
+        run: mvn -B test --file pom.xml -s $GITHUB_WORKSPACE/github-settings.xml
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
       
