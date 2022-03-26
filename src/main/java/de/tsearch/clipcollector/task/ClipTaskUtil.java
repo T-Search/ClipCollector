@@ -35,7 +35,7 @@ public class ClipTaskUtil {
 
     protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Date from, Date to, TimeWindow timeWindow) {
         for (Broadcaster broadcaster : broadcasters) {
-            logger.info("Get clips for " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+            logger.info("Get clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
             List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to, timeWindow);
             logger.debug("Found " + clips.size() + " clips");
 
