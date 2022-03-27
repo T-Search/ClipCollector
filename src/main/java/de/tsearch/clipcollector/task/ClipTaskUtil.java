@@ -13,9 +13,17 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class ClipTaskUtil {
@@ -26,6 +34,8 @@ public class ClipTaskUtil {
 
     private final ClipRepository clipRepository;
 
+    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+
     public ClipTaskUtil(ClipClient clipClient, GameClient gameClient, ClipRepository clipRepository) {
         this.clipClient = clipClient;
         this.gameClient = gameClient;
@@ -33,15 +43,29 @@ public class ClipTaskUtil {
     }
 
     protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to) {
+        List<Future<?>> futures = new ArrayList<>();
         for (Broadcaster broadcaster : broadcasters) {
-            logger.info("Get clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
-            List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
-            logger.debug("Found " + clips.size() + " clips");
+            futures.add(executorService.submit(() -> getAndUpdateClipBroadcaster(broadcaster, from, to)));
 
-            for (Clip tClip : clips) {
-                createOrUpdateClip(tClip, broadcaster);
+        }
+
+        for (Future<?> future : futures) {
+            try {
+                future.get();
+            } catch (ExecutionException | InterruptedException ignored) {
+
             }
         }
+    }
+
+    private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to) {
+        List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
+        logger.debug("Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug("Saving clips to database");
+        for (Clip tClip : clips) {
+            createOrUpdateClip(tClip, broadcaster);
+        }
+        logger.info("Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
     }
 
     protected void createOrUpdateClip(Clip tClip, Broadcaster broadcaster) {
@@ -65,9 +89,9 @@ public class ClipTaskUtil {
     }
 
     protected Timespan getTimespan(TemporalUnit temporalUnit, int i2) {
-        Instant now = Instant.now();
-        Instant from = now.minus(i2, temporalUnit);
-        Instant to = now.plus(i2, temporalUnit);
+        ZonedDateTime now = Instant.now().atZone(ZoneId.systemDefault());
+        Instant from = now.minus(i2, temporalUnit).toInstant();
+        Instant to = now.plus(5, ChronoUnit.MINUTES).toInstant();
         return new Timespan(from, to);
     }
 

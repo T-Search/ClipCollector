@@ -4,10 +4,12 @@ import de.tsearch.clipcollector.database.postgres.entity.StreamStatus;
 import de.tsearch.clipcollector.database.postgres.repository.BroadcasterRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
 
 import java.time.temporal.ChronoUnit;
 
-
+@Service
 public class OfflineStreamerClipTask {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -20,7 +22,7 @@ public class OfflineStreamerClipTask {
         this.clipTaskUtil = clipTaskUtil;
     }
 
-    //    @Scheduled(fixedRate = 90 * 60 * 1000, initialDelay = 2 * 60 * 1000)
+    @Scheduled(fixedRate = 90 * 60 * 1000, initialDelay = 2 * 60 * 1000)
     protected void getClipsFromOfflineStreamers() {
         logger.info("Get new clips for offline broadcasters");
         ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.HOURS, 2);
