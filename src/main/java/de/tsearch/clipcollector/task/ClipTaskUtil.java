@@ -6,15 +6,14 @@ import de.tsearch.tclient.ClipClient;
 import de.tsearch.tclient.GameClient;
 import de.tsearch.tclient.http.respone.Clip;
 import de.tsearch.tclient.http.respone.Game;
-import de.tsearch.tclient.http.respone.TimeWindow;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Date;
+import java.time.Instant;
+import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,10 +32,10 @@ public class ClipTaskUtil {
         this.clipRepository = clipRepository;
     }
 
-    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Date from, Date to, TimeWindow timeWindow) {
+    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to) {
         for (Broadcaster broadcaster : broadcasters) {
             logger.info("Get clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
-            List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to, timeWindow);
+            List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
             logger.debug("Found " + clips.size() + " clips");
 
             for (Clip tClip : clips) {
@@ -65,22 +64,17 @@ public class ClipTaskUtil {
         clipRepository.save(clip);
     }
 
-    protected Timespan getTimespan(int i1, int i2) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(i1, i2 * (-1));
-        Date from = calendar.getTime();
-        calendar.add(i1, i2);
-        calendar.add(Calendar.MINUTE, 5);
-        Date to = calendar.getTime();
+    protected Timespan getTimespan(TemporalUnit temporalUnit, int i2) {
+        Instant now = Instant.now();
+        Instant from = now.minus(i2, temporalUnit);
+        Instant to = now.plus(i2, temporalUnit);
         return new Timespan(from, to);
     }
 
     @Getter
     @AllArgsConstructor
     protected static class Timespan {
-        private Date from;
-        private Date to;
+        private Instant from;
+        private Instant to;
     }
 }

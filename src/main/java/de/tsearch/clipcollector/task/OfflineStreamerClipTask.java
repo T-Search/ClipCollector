@@ -2,11 +2,10 @@ package de.tsearch.clipcollector.task;
 
 import de.tsearch.clipcollector.database.postgres.entity.StreamStatus;
 import de.tsearch.clipcollector.database.postgres.repository.BroadcasterRepository;
-import de.tsearch.tclient.http.respone.TimeWindow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Calendar;
+import java.time.temporal.ChronoUnit;
 
 
 public class OfflineStreamerClipTask {
@@ -24,8 +23,8 @@ public class OfflineStreamerClipTask {
     //    @Scheduled(fixedRate = 90 * 60 * 1000, initialDelay = 2 * 60 * 1000)
     protected void getClipsFromOfflineStreamers() {
         logger.info("Get new clips for offline broadcasters");
-        ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(Calendar.HOUR, 2);
-        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.OFFLINE), timespan.getFrom(), timespan.getTo(), TimeWindow.HOURS4);
+        ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.HOURS, 2);
+        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.OFFLINE), timespan.getFrom(), timespan.getTo());
         logger.info("Finished getting new clips for offline broadcasters");
     }
 }
