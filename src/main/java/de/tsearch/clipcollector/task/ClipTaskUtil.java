@@ -20,10 +20,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ClipTaskUtil {
@@ -34,7 +32,14 @@ public class ClipTaskUtil {
 
     private final ClipRepository clipRepository;
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory() {
+        private final AtomicInteger counter = new AtomicInteger(1);
+
+        @Override
+        public Thread newThread(Runnable runnable) {
+            return new Thread(runnable, "cliptaskutil-thread-" + counter.getAndIncrement());
+        }
+    });
 
     public ClipTaskUtil(ClipClient clipClient, GameClient gameClient, ClipRepository clipRepository) {
         this.clipClient = clipClient;
