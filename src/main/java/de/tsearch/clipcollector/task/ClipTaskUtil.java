@@ -34,7 +34,7 @@ public class ClipTaskUtil {
 
     private final ClipRepository clipRepository;
 
-    private static final ExecutorService executorService = Executors.newCachedThreadPool();
+    private static final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2);
 
     public ClipTaskUtil(ClipClient clipClient, GameClient gameClient, ClipRepository clipRepository) {
         this.clipClient = clipClient;
