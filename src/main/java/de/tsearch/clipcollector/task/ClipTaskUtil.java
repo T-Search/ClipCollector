@@ -32,7 +32,7 @@ public class ClipTaskUtil {
 
     private final ClipRepository clipRepository;
 
-    private static final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 2, new ThreadFactory() {
+    private static final ExecutorService executorService = Executors.newCachedThreadPool(new ThreadFactory() {
         private final AtomicInteger counter = new AtomicInteger(1);
 
         @Override
