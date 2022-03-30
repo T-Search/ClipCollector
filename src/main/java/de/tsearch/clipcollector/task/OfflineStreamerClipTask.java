@@ -26,7 +26,7 @@ public class OfflineStreamerClipTask {
     protected void getClipsFromOfflineStreamers() {
         logger.info("Get new clips for offline broadcasters");
         ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.HOURS, 2);
-        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.OFFLINE), timespan.getFrom(), timespan.getTo());
+        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.OFFLINE), timespan.getFrom(), timespan.getTo(), "OfflineClips");
         logger.info("Finished getting new clips for offline broadcasters");
     }
 }

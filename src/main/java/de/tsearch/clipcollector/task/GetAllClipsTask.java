@@ -26,7 +26,7 @@ public class GetAllClipsTask {
     protected void getAllClips() {
         logger.info("Get all clips");
         ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.YEARS, 10);
-        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAll(), timespan.getFrom(), timespan.getTo());
+        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAll(), timespan.getFrom(), timespan.getTo(), "AllClips");
         logger.info("Finished getting all clips");
     }
 }

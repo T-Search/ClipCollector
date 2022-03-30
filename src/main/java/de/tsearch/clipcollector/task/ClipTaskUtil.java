@@ -47,10 +47,10 @@ public class ClipTaskUtil {
         this.clipRepository = clipRepository;
     }
 
-    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to) {
+    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to, String taskName) {
         List<Future<?>> futures = new ArrayList<>();
         for (Broadcaster broadcaster : broadcasters) {
-            futures.add(executorService.submit(() -> getAndUpdateClipBroadcaster(broadcaster, from, to)));
+            futures.add(executorService.submit(() -> getAndUpdateClipBroadcaster(broadcaster, from, to, taskName)));
 
         }
 
@@ -63,14 +63,14 @@ public class ClipTaskUtil {
         }
     }
 
-    private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to) {
+    private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to, String taskName) {
         List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
-        logger.debug("Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
-        logger.debug("Saving clips to database");
+        logger.debug(taskName + ": Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug(taskName + ": Saving clips to database");
         for (Clip tClip : clips) {
             createOrUpdateClip(tClip, broadcaster);
         }
-        logger.info("Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.info(taskName + ": Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
     }
 
     protected void createOrUpdateClip(Clip tClip, Broadcaster broadcaster) {
