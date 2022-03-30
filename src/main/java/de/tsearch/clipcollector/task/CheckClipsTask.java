@@ -6,7 +6,6 @@ import de.tsearch.tclient.ClipClient;
 import de.tsearch.tclient.http.respone.Clip;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,7 +27,7 @@ public class CheckClipsTask {
         this.tClipConverter = tClipConverter;
     }
 
-    @Scheduled(fixedRate = 24 * 60 * 60 * 1000, initialDelay = 3 * 60 * 60 * 1000)
+//    @Scheduled(fixedRate = 24 * 60 * 60 * 1000, initialDelay = 3 * 60 * 60 * 1000)
     protected void checkAllClips() {
         logger.info("Start check all existing clips job");
         List<String> ids = clipRepository.getAllIds();
