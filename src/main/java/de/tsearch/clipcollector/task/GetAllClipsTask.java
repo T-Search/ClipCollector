@@ -22,7 +22,7 @@ public class GetAllClipsTask {
     }
 
     //Once a week
-    @Scheduled(fixedRate = 7 * 24 * 60 * 60 * 1000, initialDelay = 0 * 5 * 60 * 1000)
+    @Scheduled(fixedRate = 7 * 24 * 60 * 60 * 1000, initialDelay = 5 * 60 * 1000)
     protected void getAllClips() {
         logger.info("Get all clips");
         ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.YEARS, 10);
