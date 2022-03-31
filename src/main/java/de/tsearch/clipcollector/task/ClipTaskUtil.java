@@ -1,11 +1,10 @@
 package de.tsearch.clipcollector.task;
 
+import de.tsearch.clipcollector.database.postgres.converter.TClipConverter;
 import de.tsearch.clipcollector.database.postgres.entity.Broadcaster;
 import de.tsearch.clipcollector.database.postgres.repository.ClipRepository;
 import de.tsearch.tclient.ClipClient;
-import de.tsearch.tclient.GameClient;
 import de.tsearch.tclient.http.respone.Clip;
-import de.tsearch.tclient.http.respone.Game;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -28,9 +26,10 @@ public class ClipTaskUtil {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private final ClipClient clipClient;
-    private final GameClient gameClient;
 
     private final ClipRepository clipRepository;
+
+    private final TClipConverter tClipConverter;
 
     private static final ExecutorService executorService = Executors.newCachedThreadPool(new ThreadFactory() {
         private final AtomicInteger counter = new AtomicInteger(1);
@@ -41,10 +40,10 @@ public class ClipTaskUtil {
         }
     });
 
-    public ClipTaskUtil(ClipClient clipClient, GameClient gameClient, ClipRepository clipRepository) {
+    public ClipTaskUtil(ClipClient clipClient, ClipRepository clipRepository, TClipConverter tClipConverter) {
         this.clipClient = clipClient;
-        this.gameClient = gameClient;
         this.clipRepository = clipRepository;
+        this.tClipConverter = tClipConverter;
     }
 
     protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to, String taskName) {
@@ -75,21 +74,8 @@ public class ClipTaskUtil {
 
     protected void createOrUpdateClip(Clip tClip, Broadcaster broadcaster) {
         de.tsearch.clipcollector.database.postgres.entity.Clip clip = new de.tsearch.clipcollector.database.postgres.entity.Clip();
-        clip.setId(tClip.getId());
         clip.setBroadcaster(broadcaster);
-        clip.setCreatorId(tClip.getCreatorID());
-        clip.setCreatorName(tClip.getCreatorName());
-        clip.setVideoId(tClip.getVideoID());
-        if (!tClip.getGameID().equals("")) {
-            Optional<Game> gameOptional = gameClient.getGameById(Long.parseLong(tClip.getGameID()));
-            gameOptional.ifPresent(game -> clip.setGame(game.getName()));
-        }
-        clip.setLanguage(tClip.getLanguage());
-        clip.setTitle(tClip.getTitle());
-        clip.setViewCount(tClip.getViewCount());
-        clip.setCreatedAt(tClip.getCreatedAt());
-        clip.setThumbnailUrl(tClip.getThumbnailURL());
-        clip.setDuration(tClip.getDuration());
+        tClipConverter.updateDatabaseClipProperties(clip, tClip);
         clipRepository.save(clip);
     }
 

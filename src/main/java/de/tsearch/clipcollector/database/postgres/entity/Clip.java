@@ -26,7 +26,7 @@ public class Clip {
     private String creatorName;
 
     @Column
-    private String videoId;
+    private Long videoId;
 
     @Column
     private String game;
@@ -38,7 +38,7 @@ public class Clip {
     private String title;
 
     @Column
-    private long viewCount;
+    private Long viewCount;
 
     @Column
     private Date createdAt;

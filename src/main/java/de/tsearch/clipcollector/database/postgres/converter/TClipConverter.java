@@ -24,7 +24,7 @@ public class TClipConverter {
         clip.setId(tClip.getId());
         clip.setCreatorId(tClip.getCreatorID());
         clip.setCreatorName(tClip.getCreatorName());
-        clip.setVideoId(tClip.getVideoID());
+        clip.setVideoId(convertStringToLong(tClip.getVideoID()));
         if (!tClip.getGameID().equals("")) {
             Optional<Game> gameOptional = gameClient.getGameById(Long.parseLong(tClip.getGameID()));
             gameOptional.ifPresent(game -> clip.setGame(game.getName()));
@@ -35,5 +35,15 @@ public class TClipConverter {
         clip.setCreatedAt(tClip.getCreatedAt());
         clip.setThumbnailUrl(tClip.getThumbnailURL());
         clip.setDuration(tClip.getDuration());
+    }
+
+    private Long convertStringToLong(String videoId) {
+        if (videoId == null) return null;
+        if (videoId.equals("")) return null;
+        try {
+            return Long.parseLong(videoId);
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 }
