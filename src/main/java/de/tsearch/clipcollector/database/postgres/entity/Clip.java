@@ -40,7 +40,7 @@ public class Clip {
     @Column
     private Long viewCount;
 
-    @Column
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private Date createdAt;
 
     @Column
