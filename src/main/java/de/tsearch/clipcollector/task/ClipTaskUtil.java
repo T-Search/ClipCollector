@@ -61,12 +61,12 @@ public class ClipTaskUtil {
 
     private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to, Logger logger) {
         List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
-        logger.debug("Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug("Found {} clips for broadcaster {}({})", clips.size(), broadcaster.getDisplayName(), broadcaster.getId());
         logger.debug("Saving clips to database");
         for (Clip tClip : clips) {
             createOrUpdateClip(tClip, broadcaster);
         }
-        logger.debug("Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug("Got clips for broadcaster {}({})", broadcaster.getDisplayName(), broadcaster.getId());
     }
 
     protected void createOrUpdateClip(Clip tClip, Broadcaster broadcaster) {
