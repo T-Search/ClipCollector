@@ -26,7 +26,7 @@ public class OnlineStreamerClipTask {
     protected void getClipsFromOnlineStreamers() {
         logger.info("Get new clips for online broadcasters");
         ClipTaskUtil.Timespan timespan = clipTaskUtil.getTimespan(ChronoUnit.MINUTES, 20);
-        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.ONLINE), timespan.getFrom(), timespan.getTo(), "OnlineClips");
+        clipTaskUtil.getAndUpdateClips(broadcasterRepository.findAllByStatus(StreamStatus.ONLINE), timespan.getFrom(), timespan.getTo(), logger);
         logger.info("Finished getting new clips for online broadcasters");
     }
 }

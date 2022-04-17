@@ -8,7 +8,6 @@ import de.tsearch.tclient.http.respone.Clip;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -23,8 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class ClipTaskUtil {
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
-
     private final ClipClient clipClient;
 
     private final ClipRepository clipRepository;
@@ -46,10 +43,10 @@ public class ClipTaskUtil {
         this.tClipConverter = tClipConverter;
     }
 
-    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to, String taskName) {
+    protected void getAndUpdateClips(Iterable<Broadcaster> broadcasters, Instant from, Instant to, Logger logger) {
         List<Future<?>> futures = new ArrayList<>();
         for (Broadcaster broadcaster : broadcasters) {
-            futures.add(executorService.submit(() -> getAndUpdateClipBroadcaster(broadcaster, from, to, taskName)));
+            futures.add(executorService.submit(() -> getAndUpdateClipBroadcaster(broadcaster, from, to, logger)));
 
         }
 
@@ -62,14 +59,14 @@ public class ClipTaskUtil {
         }
     }
 
-    private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to, String taskName) {
+    private void getAndUpdateClipBroadcaster(Broadcaster broadcaster, Instant from, Instant to, Logger logger) {
         List<Clip> clips = clipClient.getAllClipsInWindowUncached(broadcaster.getId(), from, to);
-        logger.debug(taskName + ": Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
-        logger.debug(taskName + ": Saving clips to database");
+        logger.debug("Found " + clips.size() + " clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug("Saving clips to database");
         for (Clip tClip : clips) {
             createOrUpdateClip(tClip, broadcaster);
         }
-        logger.info(taskName + ": Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
+        logger.debug("Got clips for broadcaster " + broadcaster.getDisplayName() + " (" + broadcaster.getId() + ")");
     }
 
     protected void createOrUpdateClip(Clip tClip, Broadcaster broadcaster) {
