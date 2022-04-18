@@ -51,7 +51,7 @@
         <dependency>
             <groupId>de.tsearch</groupId>
             <artifactId>tclient</artifactId>
-            <version>0.0.4-SNAPSHOT</version>
+            <version>0.0.10-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
